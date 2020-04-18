@@ -48,6 +48,30 @@ class App extends Component {
         Password: ${this.state.password}
         `);
     } else {
+      let formErrors = this.state.formErrors;
+      formErrors.firstName =
+        this.state.firstName === null
+          ? "First Name should not be empty"
+          : formErrors.firstName;
+
+      formErrors.lastName =
+        this.state.lastName === null
+          ? "Last Name should not be empty"
+          : formErrors.lastName;
+
+      formErrors.email =
+        this.state.email === null
+          ? "Email should not be empty"
+          : formErrors.email;
+
+      formErrors.password =
+        this.state.password === null
+          ? "Password should not be empty"
+          : formErrors.password;
+      this.setState({
+        formErrors,
+      });
+
       console.error("FORM INVALID -  DISPLAY ERRORMESSAGE");
       alert("Form is Invalid");
     }
@@ -56,31 +80,7 @@ class App extends Component {
   handleChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
-    let formErrors = this.state.formErrors;
-    let fieldEntered = this.state.fieldEntered;
-    switch (name) {
-      case "firstName":
-        formErrors.firstName =
-          value.length < 3 ? "Minimu 3 characters required" : "";
-        fieldEntered.firstName = true;
-        break;
-      case "lastName":
-        formErrors.lastName =
-          value.length < 3 ? "Minimu 3 characters required" : "";
-        fieldEntered.lastName = true;
-        break;
-      case "email":
-        formErrors.email = emailRegex.test(value)
-          ? ""
-          : "Invalid email address";
-        fieldEntered.email = true;
-        break;
-      case "password":
-        formErrors.password =
-          value.length < 3 ? "Minimu 3 characters required" : "";
-        fieldEntered.password = true;
-        break;
-    }
+    let formErrors = this.handleValuesandErros(name, value);
     this.setState(
       {
         formErrors,
@@ -91,6 +91,36 @@ class App extends Component {
       }
     );
   };
+  handleValuesandErros = (name, value) => {
+    let formErrors = this.state.formErrors;
+    switch (name) {
+      case "firstName":
+        formErrors.firstName =
+          value == null || value.length < 3
+            ? "Minimu 3 characters required"
+            : "";
+        break;
+      case "lastName":
+        formErrors.lastName =
+          value == null || value.length < 3
+            ? "Minimu 3 characters required"
+            : "";
+        break;
+      case "email":
+        formErrors.email = emailRegex.test(value)
+          ? ""
+          : "Invalid email address";
+        break;
+      case "password":
+        formErrors.password =
+          value == null || value.length < 3
+            ? "Minimu 3 characters required"
+            : "";
+        break;
+    }
+    return formErrors;
+  };
+
   render() {
     const { formErrors } = this.state;
     return (
@@ -136,7 +166,7 @@ class App extends Component {
                 noValidate
                 onChange={this.handleChange}
               ></input>
-              {formErrors.firstName.email > 0 && (
+              {formErrors.email.length > 0 && (
                 <span className="errorMessage">{formErrors.email}</span>
               )}
             </div>
